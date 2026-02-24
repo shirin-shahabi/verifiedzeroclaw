@@ -2,6 +2,20 @@
 //!
 //! This module contains reusable helper functions used across the codebase.
 
+/// Find the largest byte index `<= max` that falls on a UTF-8 char boundary.
+///
+/// Stable polyfill for `str::floor_char_boundary` (nightly-only as of Rust 1.90).
+pub fn floor_char_boundary(s: &str, max: usize) -> usize {
+    if max >= s.len() {
+        return s.len();
+    }
+    let mut idx = max;
+    while idx > 0 && !s.is_char_boundary(idx) {
+        idx -= 1;
+    }
+    idx
+}
+
 /// Truncate a string to at most `max_chars` characters, appending "..." if truncated.
 ///
 /// This function safely handles multi-byte UTF-8 characters (emoji, CJK, accented characters)

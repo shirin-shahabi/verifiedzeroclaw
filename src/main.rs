@@ -76,6 +76,10 @@ mod peripherals;
 mod providers;
 mod runtime;
 mod security;
+#[cfg(feature = "zkproxy")]
+mod zkproxy {
+    pub use zeroclaw::zkproxy::*;
+}
 mod service;
 mod skillforge;
 mod skills;
