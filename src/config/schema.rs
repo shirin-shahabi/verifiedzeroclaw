@@ -3133,7 +3133,72 @@ pub struct SecurityConfig {
     /// Emergency-stop state machine configuration.
     #[serde(default)]
     pub estop: EstopConfig,
+
+    /// ZK proxy configuration for zero-knowledge proof-attested guard models.
+    #[cfg(feature = "zkproxy")]
+    #[serde(default)]
+    pub zkproxy: ZkProxySchemaConfig,
 }
+
+/// ZK proxy configuration for the config schema.
+#[cfg(feature = "zkproxy")]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct ZkProxySchemaConfig {
+    /// Enable ZK proxy guard checks.
+    #[serde(default)]
+    pub enabled: bool,
+
+    /// Path to the guard ONNX model.
+    #[serde(default = "default_zkproxy_model_path")]
+    pub model_path: String,
+
+    /// Path to the guard config JSON.
+    #[serde(default = "default_zkproxy_config_path")]
+    pub config_path: String,
+
+    /// Python binary to use for the worker.
+    #[serde(default = "default_zkproxy_python_bin")]
+    pub python_bin: String,
+
+    /// Path to the worker script.
+    #[serde(default = "default_zkproxy_worker_script")]
+    pub worker_script: String,
+
+    /// Guard score threshold (0.0-1.0). Scores above this block the request.
+    #[serde(default = "default_zkproxy_threshold")]
+    pub threshold: f64,
+
+    /// Enable TEE attestation binding on proofs.
+    #[serde(default)]
+    pub tee_enabled: bool,
+}
+
+#[cfg(feature = "zkproxy")]
+impl Default for ZkProxySchemaConfig {
+    fn default() -> Self {
+        Self {
+            enabled: false,
+            model_path: default_zkproxy_model_path(),
+            config_path: default_zkproxy_config_path(),
+            python_bin: default_zkproxy_python_bin(),
+            worker_script: default_zkproxy_worker_script(),
+            threshold: default_zkproxy_threshold(),
+            tee_enabled: false,
+        }
+    }
+}
+
+#[cfg(feature = "zkproxy")]
+fn default_zkproxy_model_path() -> String { "zkproxy/guard_model.onnx".to_string() }
+#[cfg(feature = "zkproxy")]
+fn default_zkproxy_config_path() -> String { "zkproxy/guard_config.json".to_string() }
+#[cfg(feature = "zkproxy")]
+fn default_zkproxy_python_bin() -> String { "python3".to_string() }
+#[cfg(feature = "zkproxy")]
+fn default_zkproxy_worker_script() -> String { "zkproxy/zkproxy_worker.py".to_string() }
+#[cfg(feature = "zkproxy")]
+fn default_zkproxy_threshold() -> f64 { 0.5 }
 
 /// OTP validation strategy.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, Default, JsonSchema, PartialEq, Eq)]

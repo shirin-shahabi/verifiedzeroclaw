@@ -64,6 +64,8 @@ pub mod providers;
 pub mod rag;
 pub mod runtime;
 pub(crate) mod security;
+#[cfg(feature = "zkproxy")]
+pub mod zkproxy;
 pub(crate) mod service;
 pub(crate) mod skills;
 pub mod tools;

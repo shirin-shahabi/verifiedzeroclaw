@@ -261,6 +261,17 @@ impl PromptGuard {
     }
 }
 
+#[cfg(feature = "zkproxy")]
+impl PromptGuard {
+    pub async fn scan_zk(
+        &self,
+        content: &str,
+        zk_proxy: &crate::zkproxy::ZkProxy,
+    ) -> Result<crate::zkproxy::GuardDecision, String> {
+        zk_proxy.guard_check(content, "prompt_guard").await
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

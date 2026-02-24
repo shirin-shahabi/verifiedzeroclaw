@@ -308,6 +308,8 @@ pub struct AppState {
     pub cost_tracker: Option<Arc<CostTracker>>,
     /// SSE broadcast channel for real-time events
     pub event_tx: tokio::sync::broadcast::Sender<serde_json::Value>,
+    #[cfg(feature = "zkproxy")]
+    pub zk_proxy: Option<Arc<crate::zkproxy::ZkProxy>>,
 }
 
 /// Run the HTTP gateway using axum with proper HTTP/1.1 compliance.
@@ -641,6 +643,8 @@ pub async fn run_gateway(host: &str, port: u16, config: Config) -> Result<()> {
         tools_registry,
         cost_tracker,
         event_tx,
+        #[cfg(feature = "zkproxy")]
+        zk_proxy: None,
     };
 
     // Config PUT needs larger body limit (1MB)
@@ -1595,6 +1599,8 @@ mod tests {
             tools_registry: Arc::new(Vec::new()),
             cost_tracker: None,
             event_tx: tokio::sync::broadcast::channel(16).0,
+            #[cfg(feature = "zkproxy")]
+            zk_proxy: None,
         };
 
         let response = handle_metrics(State(state)).await.into_response();
@@ -1643,6 +1649,8 @@ mod tests {
             tools_registry: Arc::new(Vec::new()),
             cost_tracker: None,
             event_tx: tokio::sync::broadcast::channel(16).0,
+            #[cfg(feature = "zkproxy")]
+            zk_proxy: None,
         };
 
         let response = handle_metrics(State(state)).await.into_response();
@@ -2009,6 +2017,8 @@ mod tests {
             tools_registry: Arc::new(Vec::new()),
             cost_tracker: None,
             event_tx: tokio::sync::broadcast::channel(16).0,
+            #[cfg(feature = "zkproxy")]
+            zk_proxy: None,
         };
 
         let mut headers = HeaderMap::new();

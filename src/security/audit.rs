@@ -21,6 +21,10 @@ pub enum AuditEventType {
     AuthFailure,
     PolicyViolation,
     SecurityEvent,
+    #[cfg(feature = "zkproxy")]
+    ZkProofGenerated,
+    #[cfg(feature = "zkproxy")]
+    ZkVerificationFailed,
 }
 
 /// Actor information (who performed the action)
